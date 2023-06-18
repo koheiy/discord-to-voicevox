@@ -24,6 +24,9 @@ public class YomiagekBotApplication implements CommandLineRunner {
     // DiscordBotのToken.
     private final String token;
 
+    // デフォルトはずんだもん
+    private Speaker speaker = Speaker.Zundamon_Normal;
+
     private AudioPlayerManager playerManager;
     private AudioPlayer player;
     private AudioProvider provider;
@@ -56,8 +59,8 @@ public class YomiagekBotApplication implements CommandLineRunner {
             final Message message = e.getMessage();
             if (message.getAuthor().get().isBot()) return;
             String content = message.getContent();
-            if (!"!dis".equals(message.getData().content()) && !"!join".equals(message.getData().content())) {
-                voiceVoxClient.send(content).ifPresent((pathName -> playerManager.loadItem(
+            if (!message.getData().content().startsWith("!")) {
+                voiceVoxClient.send(speaker, content).ifPresent((pathName -> playerManager.loadItem(
                         pathName,
                         scheduler
                 )));
@@ -103,6 +106,20 @@ public class YomiagekBotApplication implements CommandLineRunner {
             }
         });
 
+        // Speakerを変える
+        gateway.on(MessageCreateEvent.class).subscribe(e -> {
+            final Message message = e.getMessage();
+            // あとでなおす
+            if (message.getAuthor().get().isBot()) return;
+            if (message.getData().content().startsWith("!setspeaker=")) {
+                String s = message.getData().content().replace("!setspeaker=", "");
+                this.speaker = Speaker.of(Integer.parseInt(s));
+                e.getMessage()
+                        .getChannel().block()
+                        .createMessage(speaker.getSpeaker() + ":" + speaker.getEmotions() + "に設定しました。").block();
+            }
+        });
+
         gateway.onDisconnect().block();
     }
 
@@ -115,4 +132,6 @@ public class YomiagekBotApplication implements CommandLineRunner {
         provider = new LavaPlayerAudioProvider(player);
         scheduler = new TrackScheduler(player);
     }
+
+
 }
