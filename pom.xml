@@ -10,7 +10,7 @@
     </parent>
     <groupId>co.jp.r</groupId>
     <artifactId>yomiagek-bot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>yomiagek-bot</name>
     <description>yomiagek-bot</description>
 

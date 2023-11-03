@@ -34,23 +34,22 @@ public class VoiceVoxClient {
         this.restTemplate = restTemplate;
     }
 
-    public Optional<String> send(final String text)  {
+    public Optional<String> send(final Speaker speaker, final String text)  {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(
-                restTemplate.exchange(voiceVoxUrl + "/audio_query?speaker=1&text=" + text, HttpMethod.POST, null, String.class).getBody(),
+                restTemplate.exchange(voiceVoxUrl + "/audio_query?speaker=" + speaker.getSpeakerId() + "&text=" + text, HttpMethod.POST, null, String.class).getBody(),
                 headers
         );
 
         try {
             String pathName = wavDownloadDirectory + LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMDDHHmmss")) + ".wav";
-            System.out.println(pathName);
 
             // FIXME:これ微妙かも
             IOUtils.write(
-                    restTemplate.exchange(voiceVoxUrl + "/synthesis?speaker=1", HttpMethod.POST, requestEntity, byte[].class).getBody(),
+                    restTemplate.exchange(voiceVoxUrl + "/synthesis?speaker=" + speaker.getSpeakerId(), HttpMethod.POST, requestEntity, byte[].class).getBody(),
                     new FileOutputStream(pathName)
             );
 
