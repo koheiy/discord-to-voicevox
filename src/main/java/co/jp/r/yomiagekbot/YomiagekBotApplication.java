@@ -135,10 +135,10 @@ public class YomiagekBotApplication implements CommandLineRunner {
     }
 
     private boolean containsForbiddenCharacters(final String src) {
-        if (!StringUtils.hasLength(src)) return false;
-        if (!src.startsWith("!")) return false;
+        if (!StringUtils.hasLength(src)) return true;
+        if (src.startsWith("!")) return true;
         // URLを無視したい
-        if (!src.startsWith("http://") && !src.startsWith("https://")) return false;
-        return true;
+        if (src.startsWith("http://") || src.startsWith("https://")) return true;
+        return false;
     }
 }
