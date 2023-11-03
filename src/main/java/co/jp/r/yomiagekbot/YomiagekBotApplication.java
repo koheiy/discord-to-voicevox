@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.util.StringUtils;
 
 @SpringBootApplication
 public class YomiagekBotApplication implements CommandLineRunner {
@@ -59,7 +60,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
             final Message message = e.getMessage();
             if (message.getAuthor().get().isBot()) return;
             String content = message.getContent();
-            if (!message.getData().content().startsWith("!")) {
+            if (!containsForbiddenCharacters(message.getData().content())) {
                 voiceVoxClient.send(speaker, content).ifPresent((pathName -> playerManager.loadItem(
                         pathName,
                         scheduler
@@ -133,5 +134,11 @@ public class YomiagekBotApplication implements CommandLineRunner {
         scheduler = new TrackScheduler(player);
     }
 
-
+    private boolean containsForbiddenCharacters(final String src) {
+        if (!StringUtils.hasLength(src)) return false;
+        if (!src.startsWith("!")) return false;
+        // URLを無視したい
+        if (!src.startsWith("http://") && !src.startsWith("https://")) return false;
+        return true;
+    }
 }
