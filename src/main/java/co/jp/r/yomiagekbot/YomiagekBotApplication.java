@@ -121,6 +121,19 @@ public class YomiagekBotApplication implements CommandLineRunner {
             }
         });
 
+        // 一覧を出すだけ
+        gateway.on(MessageCreateEvent.class).subscribe(e -> {
+            final Message message = e.getMessage();
+            // あとでなおす
+            if (message.getAuthor().get().isBot()) return;
+            if (message.getData().content().startsWith("!speakers")) {
+                e.getMessage()
+                        .getChannel().block()
+                        .createMessage(Speaker.getSpeakerList()).block();
+            }
+        });
+
+
         gateway.onDisconnect().block();
     }
 

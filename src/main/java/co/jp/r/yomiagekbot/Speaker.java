@@ -1,5 +1,7 @@
 package co.jp.r.yomiagekbot;
 
+import java.util.StringJoiner;
+
 public enum Speaker {
 
     Shikokumetan_Amaama(0,"Shikokumetan","あまあま"),
@@ -89,5 +91,13 @@ public enum Speaker {
             }
         }
         throw new SpeakerNotFoundException();
+    }
+
+    public static String getSpeakerList() {
+        StringJoiner speakers = new StringJoiner("\r\n");
+        for(Speaker speaker : values()) {
+            speakers.add(speaker.getSpeaker() + ": " + speaker.getEmotions());
+        }
+        return speakers.toString();
     }
 }
