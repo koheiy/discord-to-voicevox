@@ -5,6 +5,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.playback.NonAllocatingAudioFrameBuffer;
+import discord4j.common.util.Snowflake;
 import discord4j.core.DiscordClient;
 import discord4j.core.GatewayDiscordClient;
 import discord4j.core.event.domain.message.MessageCreateEvent;
@@ -18,6 +19,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 @SpringBootApplication
 public class YomiagekBotApplication implements CommandLineRunner {
@@ -37,6 +40,8 @@ public class YomiagekBotApplication implements CommandLineRunner {
     private final GatewayDiscordClient gateway;
 
     private VoiceVoxClient voiceVoxClient;
+
+    private Snowflake selfId;
 
     public YomiagekBotApplication(
             final VoiceVoxClient voiceVoxClient,
@@ -58,7 +63,13 @@ public class YomiagekBotApplication implements CommandLineRunner {
 
         gateway.on(MessageCreateEvent.class).subscribe(e -> {
             final Message message = e.getMessage();
-            if (message.getAuthor().get().isBot()) return;
+            if (message.getAuthor().get().isBot()) {
+                return;
+            }
+
+            // VCにJoinしていなければVoice変換はしない。
+            if (!isSelfJoinVc(e.getMember().orElse(null))) return;
+
             String content = message.getContent();
             if (!containsForbiddenCharacters(message.getData().content())) {
                 voiceVoxClient.send(speaker, content).ifPresent((pathName -> playerManager.loadItem(
@@ -79,6 +90,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
                     if (voiceState != null) {
                         final VoiceChannel channel = voiceState.getChannel().block();
                         if (channel != null) {
+
                             channel.sendDisconnectVoiceState().block();
                         }
                     }
@@ -145,6 +157,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
         player = playerManager.createPlayer();
         provider = new LavaPlayerAudioProvider(player);
         scheduler = new TrackScheduler(player);
+        selfId = gateway.getSelfId();
     }
 
     private boolean containsForbiddenCharacters(final String src) {
@@ -152,6 +165,20 @@ public class YomiagekBotApplication implements CommandLineRunner {
         if (src.startsWith("!")) return true;
         // URLを無視したい
         if (src.startsWith("http://") || src.startsWith("https://")) return true;
+        return false;
+    }
+
+    // 名前が。
+    private boolean isSelfJoinVc(final Member member) {
+        if (member != null) {
+            final VoiceState voiceState = member.getVoiceState().block();
+            if (voiceState != null) {
+                final VoiceChannel channel = voiceState.getChannel().block();
+                if (channel != null) {
+                    return channel.isMemberConnected(selfId).block();
+                }
+            }
+        }
         return false;
     }
 }
