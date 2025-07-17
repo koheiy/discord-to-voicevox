@@ -4,6 +4,7 @@ import org.atilika.kuromoji.Token;
 import org.atilika.kuromoji.Tokenizer;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -13,7 +14,6 @@ public class RealOjisanConverterWithKuromoji {
         GREETING, SMALL_TALK, ENCOURAGEMENT, APOLOGY
     }
 
-    // 原形キーワード定義（形態素解析後のマッチ用）
     private static final Map<Category, List<String>> CATEGORY_BASE_FORMS = Map.of(
             Category.GREETING, List.of("おはよう", "こんにちは", "元気", "調子"),
             Category.SMALL_TALK, List.of("暑い", "寒い", "天気", "映画", "話", "最近", "仕事", "昼ごはん"),
@@ -21,11 +21,11 @@ public class RealOjisanConverterWithKuromoji {
             Category.APOLOGY, List.of("謝る", "ごめん", "すまない", "失礼", "反省", "許す")
     );
 
-    private static final Map<Category, String[]> ENDINGS = Map.of(
-            Category.GREETING, new String[]{"だよね", "だよ〜", "よろしくね", "今日もがんばろうね"},
-            Category.SMALL_TALK, new String[]{"だよね", "なんだよ〜", "わかる〜", "って感じかな"},
-            Category.ENCOURAGEMENT, new String[]{"無理しないでね", "応援してるよ", "元気出してね", "大丈夫だよ"},
-            Category.APOLOGY, new String[]{"ほんとごめんね", "許してね", "気をつけるよ", "反省してるよ"}
+    private static final Map<Category, String[]> BASE_ENDINGS = Map.of(
+            Category.GREETING, new String[]{"だよね", "だよ〜", "よろしくね", "今日もがんばろうね", "いい日になりそうだね"},
+            Category.SMALL_TALK, new String[]{"だよね", "なんだよ〜", "わかる〜", "って感じかな", "ほんとそれ〜", "だよぉ〜ん"},
+            Category.ENCOURAGEMENT, new String[]{"無理しないでね", "応援してるよ", "元気出してね", "大丈夫だよ", "いつでも味方だよ"},
+            Category.APOLOGY, new String[]{"ほんとごめんね", "許してね", "気をつけるよ", "反省してるよ", "悪気はなかったんだよね"}
     );
 
     private static final Map<Category, String[]> INTERJECTIONS = Map.of(
@@ -54,6 +54,7 @@ public class RealOjisanConverterWithKuromoji {
         }
 
         String[] sentences = input.split("(?<=[。！？])");
+        String[] endings = getSeasonalOrTimeBasedEndings(category);
 
         for (String sentence : sentences) {
             if (sentence.trim().isEmpty()) continue;
@@ -63,7 +64,7 @@ public class RealOjisanConverterWithKuromoji {
             }
 
             sb.append(sentence.trim());
-            sb.append("、").append(getRandom(ENDINGS.get(category))).append("。\n");
+            sb.append("、").append(getRandom(endings)).append("。\n");
         }
 
         return sb.toString();
@@ -101,5 +102,27 @@ public class RealOjisanConverterWithKuromoji {
 
     private String getRandom(String[] array) {
         return array[random.nextInt(array.length)];
+    }
+
+    private String[] getSeasonalOrTimeBasedEndings(Category category) {
+        String[] base = BASE_ENDINGS.get(category);
+        List<String> list = new ArrayList<>(Arrays.asList(base));
+
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int month = now.getMonthValue();
+
+        // 時間帯別追加語尾
+        if (hour < 10) list.add("朝から元気だね〜");
+        else if (hour < 18) list.add("午後もがんばろうね");
+        else list.add("夜はゆっくりしてね");
+
+        // 季節別語尾
+        if (month >= 3 && month <= 5) list.add("春っていいね〜");
+        else if (month >= 6 && month <= 8) list.add("夏バテしないようにね");
+        else if (month >= 9 && month <= 11) list.add("秋ってなんか落ち着くよね");
+        else list.add("寒いから風邪ひかないでね");
+
+        return list.toArray(new String[0]);
     }
 }
