@@ -25,6 +25,12 @@
             <name>m2-dv8tion</name>
             <url>https://m2.dv8tion.net/releases</url>
         </repository>
+
+        <repository>
+            <id>kuromoji</id>
+            <name>kuromoji</name>
+            <url>https://www.atilika.org/nexus/content/repositories/atilika/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -37,6 +43,14 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.atilika.kuromoji/kuromoji -->
+        <!-- https://mvnrepository.com/artifact/org.atilika.kuromoji/kuromoji -->
+        <dependency>
+            <groupId>org.atilika.kuromoji</groupId>
+            <artifactId>kuromoji</artifactId>
+            <version>0.7.7</version>
         </dependency>
 
         <dependency>
