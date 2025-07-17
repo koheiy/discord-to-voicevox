@@ -75,7 +75,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
 
             String content = message.getContent();
             if (!containsForbiddenCharacters(message.getData().content())) {
-                String converted = ojisanConverter.convert(content, RealOjisanConverterV2.Category.SMALL_TALK);
+                String converted = ojisanConverter.convert(content);
                 System.out.println("変換後: " + converted);
                 voiceVoxClient.send(speaker, converted).ifPresent((pathName -> playerManager.loadItem(
                         pathName,
