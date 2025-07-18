@@ -22,17 +22,17 @@ public class RealOjisanConverterWithKuromoji {
     );
 
     private static final Map<Category, String[]> BASE_ENDINGS = Map.of(
-            Category.GREETING, new String[]{"だよね", "だよ〜", "よろしくね", "今日もがんばろうね", "いい日になりそうだね"},
-            Category.SMALL_TALK, new String[]{"だよね", "なんだよ〜", "わかる〜", "って感じかな", "ほんとそれ〜", "だよぉ〜ん"},
-            Category.ENCOURAGEMENT, new String[]{"無理しないでね", "応援してるよ", "元気出してね", "大丈夫だよ", "いつでも味方だよ"},
-            Category.APOLOGY, new String[]{"ほんとごめんね", "許してね", "気をつけるよ", "反省してるよ", "悪気はなかったんだよね"}
+            Category.GREETING, new String[]{"だよねぇ〜〜〜✨", "だよ〜ん💕", "よろしくねっ💖", "今日もがんばろうねっっ💪💪", "いい日になりそうだねぇ〜🌞"},
+            Category.SMALL_TALK, new String[]{"だよねぇ〜〜ん😎", "なんだよぉぉ〜〜💦", "わかるぅぅ〜〜🥺", "って感じかなぁ〜〜？", "ほんとそれそれ〜〜😂", "だよぉぉ〜〜ん💫"},
+            Category.ENCOURAGEMENT, new String[]{"無理しないでねぇ〜〜💦", "応援してるよぉぉぉ〜〜📣", "元気出してねっっっ💥", "大丈夫だよぉぉぉ〜〜ん💕", "いつでも味方だかんね〜〜💪"},
+            Category.APOLOGY, new String[]{"ほんっとにごめんねぇぇ〜〜🙏", "許してぇぇぇ〜〜ん🥺", "気をつけるからぁ〜〜😭", "反省してるんだよぉぉ〜〜😢", "悪気はなかったのぉぉ〜〜ん😭"}
     );
 
     private static final Map<Category, String[]> INTERJECTIONS = Map.of(
-            Category.GREETING, new String[]{"やっほ", "おはよう", "こんちゃ〜", "こんにちは"},
-            Category.SMALL_TALK, new String[]{"うんうん", "へぇ〜", "ふふっ", "それな"},
-            Category.ENCOURAGEMENT, new String[]{"うん", "そうそう", "うんうん", "よしよし"},
-            Category.APOLOGY, new String[]{"ごめん", "ううっ", "ほんとに", "しょんぼり"}
+            Category.GREETING, new String[]{"やっほ〜〜〜✨", "おっはよぉぉ〜〜☀️", "こんちゃぁ〜〜っっ🌈", "こんにちは〜〜っ💕"},
+            Category.SMALL_TALK, new String[]{"うんうんっ！", "へぇ〜〜〜っ！？", "ふふふっっ💕", "それな〜〜〜😎"},
+            Category.ENCOURAGEMENT, new String[]{"うんうんっ💪", "そうそうそう〜〜っ！", "よしよしよしぃぃ〜〜🥰", "がんばってぇぇ〜〜〜！！🔥"},
+            Category.APOLOGY, new String[]{"ごめんちゃ〜〜〜ん💦", "ううぅっ…🥺", "ほんとにぃぃ〜〜🙏", "しょんぼりぃ〜〜〜😢"}
     );
 
     private static final List<Category> PRIORITY_ORDER = List.of(
@@ -50,7 +50,7 @@ public class RealOjisanConverterWithKuromoji {
         StringBuilder sb = new StringBuilder();
 
         if (category == Category.GREETING) {
-            sb.append(getRandom(INTERJECTIONS.get(category))).append("！ ");
+            sb.append(getRandom(INTERJECTIONS.get(category))).append("っ！ ");
         }
 
         String[] sentences = input.split("(?<=[。！？])");
@@ -59,12 +59,12 @@ public class RealOjisanConverterWithKuromoji {
         for (String sentence : sentences) {
             if (sentence.trim().isEmpty()) continue;
 
-            if (random.nextInt(100) < 40) {
+            if (random.nextInt(100) < 70) {
                 sb.append(getRandom(INTERJECTIONS.get(category))).append("、");
             }
 
             sb.append(sentence.trim());
-            sb.append("、").append(getRandom(endings)).append("。\n");
+            sb.append("、").append(getRandom(endings)).append("\n");
         }
 
         return sb.toString();
@@ -112,16 +112,14 @@ public class RealOjisanConverterWithKuromoji {
         int hour = now.getHour();
         int month = now.getMonthValue();
 
-        // 時間帯別追加語尾
-        if (hour < 10) list.add("朝から元気だね〜");
-        else if (hour < 18) list.add("午後もがんばろうね");
-        else list.add("夜はゆっくりしてね");
+        if (hour < 10) list.add("朝から元気もりもりだよぉぉ〜〜ん💥");
+        else if (hour < 18) list.add("午後もはりきっていこうねぇぇ〜〜💪");
+        else list.add("夜はムリせずゆっくりしよぉぉ〜〜ね〜〜💤");
 
-        // 季節別語尾
-        if (month >= 3 && month <= 5) list.add("春っていいね〜");
-        else if (month >= 6 && month <= 8) list.add("夏バテしないようにね");
-        else if (month >= 9 && month <= 11) list.add("秋ってなんか落ち着くよね");
-        else list.add("寒いから風邪ひかないでね");
+        if (month >= 3 && month <= 5) list.add("春ってキモチい〜〜〜ねぇぇ〜〜🌸");
+        else if (month >= 6 && month <= 8) list.add("夏はアツくてドキドキだよぉぉ〜〜🔥");
+        else if (month >= 9 && month <= 11) list.add("秋ってなんか…センチメンタルだよねぇぇ〜〜🍁");
+        else list.add("冬はくっついてあったまりた〜〜〜い🥶💕");
 
         return list.toArray(new String[0]);
     }
