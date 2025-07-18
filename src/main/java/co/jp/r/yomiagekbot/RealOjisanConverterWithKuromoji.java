@@ -4,6 +4,7 @@ import org.atilika.kuromoji.Token;
 import org.atilika.kuromoji.Tokenizer;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Component
@@ -13,7 +14,6 @@ public class RealOjisanConverterWithKuromoji {
         GREETING, SMALL_TALK, ENCOURAGEMENT, APOLOGY
     }
 
-    // 原形キーワード定義（形態素解析後のマッチ用）
     private static final Map<Category, List<String>> CATEGORY_BASE_FORMS = Map.of(
             Category.GREETING, List.of("おはよう", "こんにちは", "元気", "調子"),
             Category.SMALL_TALK, List.of("暑い", "寒い", "天気", "映画", "話", "最近", "仕事", "昼ごはん"),
@@ -21,18 +21,18 @@ public class RealOjisanConverterWithKuromoji {
             Category.APOLOGY, List.of("謝る", "ごめん", "すまない", "失礼", "反省", "許す")
     );
 
-    private static final Map<Category, String[]> ENDINGS = Map.of(
-            Category.GREETING, new String[]{"だよね", "だよ〜", "よろしくね", "今日もがんばろうね"},
-            Category.SMALL_TALK, new String[]{"だよね", "なんだよ〜", "わかる〜", "って感じかな"},
-            Category.ENCOURAGEMENT, new String[]{"無理しないでね", "応援してるよ", "元気出してね", "大丈夫だよ"},
-            Category.APOLOGY, new String[]{"ほんとごめんね", "許してね", "気をつけるよ", "反省してるよ"}
+    private static final Map<Category, String[]> BASE_ENDINGS = Map.of(
+            Category.GREETING, new String[]{"だよねぇ〜〜〜✨", "だよ〜ん💕", "よろしくねっ💖", "今日もがんばろうねっっ💪💪", "いい日になりそうだねぇ〜🌞"},
+            Category.SMALL_TALK, new String[]{"だよねぇ〜〜ん😎", "なんだよぉぉ〜〜💦", "わかるぅぅ〜〜🥺", "って感じかなぁ〜〜？", "ほんとそれそれ〜〜😂", "だよぉぉ〜〜ん💫"},
+            Category.ENCOURAGEMENT, new String[]{"無理しないでねぇ〜〜💦", "応援してるよぉぉぉ〜〜📣", "元気出してねっっっ💥", "大丈夫だよぉぉぉ〜〜ん💕", "いつでも味方だかんね〜〜💪"},
+            Category.APOLOGY, new String[]{"ほんっとにごめんねぇぇ〜〜🙏", "許してぇぇぇ〜〜ん🥺", "気をつけるからぁ〜〜😭", "反省してるんだよぉぉ〜〜😢", "悪気はなかったのぉぉ〜〜ん😭"}
     );
 
     private static final Map<Category, String[]> INTERJECTIONS = Map.of(
-            Category.GREETING, new String[]{"やっほ", "おはよう", "こんちゃ〜", "こんにちは"},
-            Category.SMALL_TALK, new String[]{"うんうん", "へぇ〜", "ふふっ", "それな"},
-            Category.ENCOURAGEMENT, new String[]{"うん", "そうそう", "うんうん", "よしよし"},
-            Category.APOLOGY, new String[]{"ごめん", "ううっ", "ほんとに", "しょんぼり"}
+            Category.GREETING, new String[]{"やっほ〜〜〜✨", "おっはよぉぉ〜〜☀️", "こんちゃぁ〜〜っっ🌈", "こんにちは〜〜っ💕"},
+            Category.SMALL_TALK, new String[]{"うんうんっ！", "へぇ〜〜〜っ！？", "ふふふっっ💕", "それな〜〜〜😎"},
+            Category.ENCOURAGEMENT, new String[]{"うんうんっ💪", "そうそうそう〜〜っ！", "よしよしよしぃぃ〜〜🥰", "がんばってぇぇ〜〜〜！！🔥"},
+            Category.APOLOGY, new String[]{"ごめんちゃ〜〜〜ん💦", "ううぅっ…🥺", "ほんとにぃぃ〜〜🙏", "しょんぼりぃ〜〜〜😢"}
     );
 
     private static final List<Category> PRIORITY_ORDER = List.of(
@@ -50,20 +50,21 @@ public class RealOjisanConverterWithKuromoji {
         StringBuilder sb = new StringBuilder();
 
         if (category == Category.GREETING) {
-            sb.append(getRandom(INTERJECTIONS.get(category))).append("！ ");
+            sb.append(getRandom(INTERJECTIONS.get(category))).append("っ！ ");
         }
 
         String[] sentences = input.split("(?<=[。！？])");
+        String[] endings = getSeasonalOrTimeBasedEndings(category);
 
         for (String sentence : sentences) {
             if (sentence.trim().isEmpty()) continue;
 
-            if (random.nextInt(100) < 40) {
+            if (random.nextInt(100) < 70) {
                 sb.append(getRandom(INTERJECTIONS.get(category))).append("、");
             }
 
             sb.append(sentence.trim());
-            sb.append("、").append(getRandom(ENDINGS.get(category))).append("。\n");
+            sb.append("、").append(getRandom(endings)).append("\n");
         }
 
         return sb.toString();
@@ -101,5 +102,25 @@ public class RealOjisanConverterWithKuromoji {
 
     private String getRandom(String[] array) {
         return array[random.nextInt(array.length)];
+    }
+
+    private String[] getSeasonalOrTimeBasedEndings(Category category) {
+        String[] base = BASE_ENDINGS.get(category);
+        List<String> list = new ArrayList<>(Arrays.asList(base));
+
+        LocalDateTime now = LocalDateTime.now();
+        int hour = now.getHour();
+        int month = now.getMonthValue();
+
+        if (hour < 10) list.add("朝から元気もりもりだよぉぉ〜〜ん💥");
+        else if (hour < 18) list.add("午後もはりきっていこうねぇぇ〜〜💪");
+        else list.add("夜はムリせずゆっくりしよぉぉ〜〜ね〜〜💤");
+
+        if (month >= 3 && month <= 5) list.add("春ってキモチい〜〜〜ねぇぇ〜〜🌸");
+        else if (month >= 6 && month <= 8) list.add("夏はアツくてドキドキだよぉぉ〜〜🔥");
+        else if (month >= 9 && month <= 11) list.add("秋ってなんか…センチメンタルだよねぇぇ〜〜🍁");
+        else list.add("冬はくっついてあったまりた〜〜〜い🥶💕");
+
+        return list.toArray(new String[0]);
     }
 }
