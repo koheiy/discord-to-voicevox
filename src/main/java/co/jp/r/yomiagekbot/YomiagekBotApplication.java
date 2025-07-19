@@ -36,6 +36,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
     private AudioProvider provider;
     private TrackScheduler scheduler;
     private RealOjisanConverterWithKuromoji ojisanConverter;
+    private ChatApiClient chatApiClient;
 
     private final DiscordClient client;
     private final GatewayDiscordClient gateway;
@@ -47,10 +48,12 @@ public class YomiagekBotApplication implements CommandLineRunner {
     public YomiagekBotApplication(
             final VoiceVoxClient voiceVoxClient,
             @Value("${discord.token}") final String token,
-            final RealOjisanConverterWithKuromoji ojisanConverter) {
+            final RealOjisanConverterWithKuromoji ojisanConverter,
+            final ChatApiClient chatApiClient) {
         this.voiceVoxClient = voiceVoxClient;
         this.token = token;
         this.ojisanConverter = ojisanConverter;
+        this.chatApiClient = chatApiClient;
         this.client = DiscordClient.create(token);
         this.gateway = client.login().block();
     }
@@ -75,7 +78,8 @@ public class YomiagekBotApplication implements CommandLineRunner {
 
             String content = message.getContent();
             if (!containsForbiddenCharacters(message.getData().content())) {
-                String converted = ojisanConverter.convert(content);
+//                String converted = ojisanConverter.convert(content);
+                String converted = chatApiClient.chat(content);
                 System.out.println("変換後: " + converted);
                 voiceVoxClient.send(speaker, converted).ifPresent((pathName -> playerManager.loadItem(
                         pathName,

@@ -3,3 +3,6 @@ voicevox:
   download-directory:
 discord:
   token:
+
+chatapi:
+  base-url:
