@@ -20,8 +20,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.StringUtils;
 
-import java.util.Objects;
-
 @SpringBootApplication
 public class YomiagekBotApplication implements CommandLineRunner {
 
