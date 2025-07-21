@@ -1,6 +1,9 @@
 
 package co.jp.r.yomiagekbot;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class RealOjisanConverterV6 {
 
     /**
@@ -11,13 +14,5 @@ public class RealOjisanConverterV6 {
      */
     public String convert(String input) {
         return OjisanStyler.style(input);
-    }
-
-    // デモ用 main メソッド（開発テスト用）
-    public static void main(String[] args) {
-        RealOjisanConverterV6 converter = new RealOjisanConverterV6();
-        String input = "今日はちょっと疲れたかも";
-        String output = converter.convert(input);
-        System.out.println(output);
     }
 }
