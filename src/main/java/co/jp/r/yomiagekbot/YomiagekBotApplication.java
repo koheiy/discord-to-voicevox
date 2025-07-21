@@ -35,7 +35,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
     private AudioPlayer player;
     private AudioProvider provider;
     private TrackScheduler scheduler;
-    private RealOjisanConverterWithKuromoji ojisanConverter;
+    private RealOjisanConverterV5 ojisanConverter;
 
     private final DiscordClient client;
     private final GatewayDiscordClient gateway;
@@ -47,7 +47,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
     public YomiagekBotApplication(
             final VoiceVoxClient voiceVoxClient,
             @Value("${discord.token}") final String token,
-            final RealOjisanConverterWithKuromoji ojisanConverter) {
+            final RealOjisanConverterV5 ojisanConverter) {
         this.voiceVoxClient = voiceVoxClient;
         this.token = token;
         this.ojisanConverter = ojisanConverter;
