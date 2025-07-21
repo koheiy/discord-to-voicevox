@@ -32,7 +32,7 @@ public class RealOjisanConverterV5 {
         this.random = new Random();
 
         // Load response pattern JSON
-        try (InputStream in = getClass().getClassLoader().getResourceAsStream("OjisanResponsePatterns.json")) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("OjisanResponsePatterns_expanded.json")) {
             if (in == null) {
                 throw new IllegalStateException("OjisanResponsePatterns.json not found in resources");
             }

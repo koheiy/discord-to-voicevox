@@ -20,6 +20,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
+
 @SpringBootApplication
 public class YomiagekBotApplication implements CommandLineRunner {
 
@@ -33,7 +35,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
     private AudioPlayer player;
     private AudioProvider provider;
     private TrackScheduler scheduler;
-    private RealOjisanConverterV5 ojisanConverter;
+    private RealOjisanConverterV6 ojisanConverter;
 
     private final DiscordClient client;
     private final GatewayDiscordClient gateway;
@@ -45,7 +47,7 @@ public class YomiagekBotApplication implements CommandLineRunner {
     public YomiagekBotApplication(
             final VoiceVoxClient voiceVoxClient,
             @Value("${discord.token}") final String token,
-            final RealOjisanConverterV5 ojisanConverter) {
+            final RealOjisanConverterV6 ojisanConverter) {
         this.voiceVoxClient = voiceVoxClient;
         this.token = token;
         this.ojisanConverter = ojisanConverter;
